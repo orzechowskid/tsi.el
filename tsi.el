@@ -1,14 +1,14 @@
-;;; tsi-engine.el
+;;; tsi.el
 
 (require 'tree-sitter)
 
-(defun tsi-engine--node-start-line (node)
+(defun tsi--node-start-line (node)
   "Returns the number of the line containing the first byte of NODE."
   (if node
       (line-number-at-pos (tsc-node-start-position node))
     1))
 
-(defun tsi-engine--get-column (node indent-info)
+(defun tsi--get-column (node indent-info)
   "Queries INDENT-INFO to calculate the indentation for the path ending at NODE.
 
 Returns a column number, or nil if no action should be taken."
@@ -41,10 +41,10 @@ Returns a column number, or nil if no action should be taken."
            "parent is (%s) %s (line %d), child is (%s) %s (line %d), original is (%s) %s"
            (if (tsc-node-named-p parent-node) "named" "anonymous")
            (tsc-node-type parent-node)
-           (tsi-engine--node-start-line parent-node)
+           (tsi--node-start-line parent-node)
            (if (tsc-node-named-p current-node) "named" "anonymous")
            (tsc-node-type current-node)
-           (tsi-engine--node-start-line current-node)
+           (tsi--node-start-line current-node)
            (if (tsc-node-named-p node) "named" "anonymous")
            (tsc-node-type node)))
         ;; indentation may apply when:
@@ -55,8 +55,8 @@ Returns a column number, or nil if no action should be taken."
                parent-node
                (tsc-node-named-p current-node)
                (not (eq
-                     (tsi-engine--node-start-line parent-node)
-                     (tsi-engine--node-start-line current-node))))
+                     (tsi--node-start-line parent-node)
+                     (tsi--node-start-line current-node))))
           (message "getting indent op")
           (push
            (funcall indent-info current-node parent-node nil)
@@ -72,7 +72,7 @@ Returns a column number, or nil if no action should be taken."
      indent-ops
      0)))
 
-(defun tsi-engine-walk (indent-info)
+(defun tsi-walk (indent-info)
   "Indents the current line using the tree-sitter AST.
 
 INDENT-INFO is a function which takes three arguments - current-node,  parent-node, and is-empty-line - and returns one of the following indent operations:
@@ -94,11 +94,11 @@ INDENT-INFO is a function which takes three arguments - current-node,  parent-no
         (save-excursion
           (back-to-indentation)
           (tree-sitter-node-at-point)))
-       (indent-to-column (tsi-engine--get-column node indent-info)))
+       (indent-to-column (tsi--get-column node indent-info)))
     (if should-save-excursion
         (save-excursion
           (indent-line-to indent-to-column))
       (indent-line-to indent-to-column))))
 
-(provide 'tsi-engine)
-;;; tsi-engine.el ends here
+(provide 'tsi)
+;;; tsi.el ends here

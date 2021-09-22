@@ -2,14 +2,14 @@
 
 (require 'tree-sitter)
 
-(defun tsi--node-start-line (node)
+(defun tsi-node-start-line (node)
   "Returns the number of the line containing the first byte of NODE."
   (if node
       (line-number-at-pos (tsc-node-start-position node))
     1))
 
-(defun tsi--get-column (node indent-info)
-  "Queries INDENT-INFO to calculate the indentation for the path ending at NODE.
+(defun tsi--get-column (node indent-info-fn)
+  "Queries INDENT-INFO-FN to calculate the indentation for the path ending at NODE.
 
 Returns a column number, or nil if no action should be taken."
   (message "< <go> >")
@@ -30,7 +30,7 @@ Returns a column number, or nil if no action should be taken."
     (when empty-line
       (message "indenting empty (or only-whitespace) line")
       (push
-       (funcall indent-info nil current-node t)
+       (funcall indent-info-fn nil current-node t)
        indent-ops))
     (while
         current-node
@@ -38,29 +38,23 @@ Returns a column number, or nil if no action should be taken."
         ;; debug
         (when parent-node
           (message
-           "parent is (%s) %s (line %d), child is (%s) %s (line %d), original is (%s) %s"
+           "parent is (%s) %s (line %d), child is (%s) %s (line %d)"
            (if (tsc-node-named-p parent-node) "named" "anonymous")
            (tsc-node-type parent-node)
-           (tsi--node-start-line parent-node)
+           (tsi-node-start-line parent-node)
            (if (tsc-node-named-p current-node) "named" "anonymous")
            (tsc-node-type current-node)
-           (tsi--node-start-line current-node)
-           (if (tsc-node-named-p node) "named" "anonymous")
-           (tsc-node-type node)))
+           (tsi-node-start-line current-node)))
         ;; indentation may apply when:
-        ;; - there exists a parent node to the current node; and
-        ;; - the current node is a named token in this language; and
-        ;; - the current node and the parent node begin on different lines
-        (when (and
-               parent-node
-               (tsc-node-named-p current-node)
-               (not (eq
-                     (tsi--node-start-line parent-node)
-                     (tsi--node-start-line current-node))))
+        ;; - there exists a parent node to the current node
+        (when
+            parent-node
           (message "getting indent op")
           (push
-           (funcall indent-info current-node parent-node nil)
-           indent-ops))
+           (funcall indent-info-fn current-node parent-node nil)
+           indent-ops)
+          ;; debug
+          (message "result: %s" (car indent-ops)))
         (setq current-node parent-node)))
     (message "ops: %s" indent-ops)
     (seq-reduce

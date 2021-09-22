@@ -1,3 +1,8 @@
+;;; tsi.el --- tree-sitter indentation -*- lexical-binding: t; -*-
+;;; Summary:
+;;; Commentary:
+;;; Code:
+
 (require 'tsi)
 
 (defcustom tsi-typescript-indent-offset 2
@@ -5,7 +10,8 @@
   :type 'number)
 
 (defvar tsi-typescript--always-indent
-  '(jsx_attribute)
+  '(jsx_attribute
+    literal_type)
   "Node types for which indentation always applies.")
 
 (defvar tsi-typescript--always-indent-children
@@ -17,7 +23,8 @@
     object_pattern
     object_type
     parenthesized_expression
-    statement_block)
+    statement_block
+    type_alias_declaration)
   "Node types for which indentation of children always applies.")
 
 (defun tsi-typescript--node-start-line (node)
@@ -26,55 +33,74 @@
       (line-number-at-pos (tsc-node-start-position node))
     1))
 
+(defun tsi-typescript--get-indent-info (node parent is-empty-line)
+  "Calculate relative indentation for the current NODE and its PARENT."
+  (let ((node-type
+         (if node (tsc-node-type node) nil))
+        (parent-type
+         (if parent (tsc-node-type parent) nil)))
+    (when is-empty-line
+      (message "indenting empty line"))
+    ;; TODO: (if is-empty-line (cond ...) (cond...)) maybe?
+    ;; TODO: when is-empty-line is t, examine the last token on the previous line
+    ;; TODO: handle ERROR nodes
+    (cond
+     ;; if this line is empty and the parent's children are always indented
+     ((and
+       is-empty-line
+       (member parent-type tsi-typescript--always-indent-children))
+      (message "+ is empty line and parent's children are always indented")
+      tsi-typescript-indent-offset)
+     ;; if node is a member of --always-indent
+     ((member node-type tsi-typescript--always-indent)
+      (message "+ this node is always indented")
+      tsi-typescript-indent-offset)
+     ;; if parent node is a member of --always-indent-children
+     ((member parent-type tsi-typescript--always-indent-children)
+      (message "+ parent's children are always indented")
+      tsi-typescript-indent-offset)
+     ;; handle union_type
+     ((eq
+       parent-type
+       'union_type)
+      nil)
+     ;; ((eq
+     ;;   node-type
+     ;;   'union_type)
+     ;;  (if (eq
+     ;;       parent-type
+     ;;       'union_type)
+          
+     ;;      ;; debug
+     ;;      (progn (message "using parent's indentation for this union_type")
+     ;;             (message "next node will be %s ; next parent will be %s" (tsc-node-type parent) (tsc-node-type (tsc-get-parent parent)))
+     ;;             (tsi-typescript--get-indent-info parent (tsc-get-parent parent) is-empty-line))
+     ;;    tsi-typescript-indent-offset))
+     ;; indent all children of jsx_element except for jsx_closing_element
+     ((and
+       (eq
+        parent-type
+        'jsx_element)
+       (not (eq
+             node-type
+             'jsx_closing_element)))
+      (mesage "+ parent is jsx_element and child is not jsx_closing_element")
+      tsi-typescript-indent-offset)
+     ;; if this node and the parent node start on the same line
+     ((eq
+       (tsi-typescript--node-start-line node)
+       (tsi-typescript--node-start-line parent))
+      (message
+       "no change; parent and child both begin on line %d"
+       (tsi-typescript--node-start-line node))
+      nil)
+     ;; fallback: do nothing
+     ;; debug
+     (t (progn (message "n/a") nil)))))
+
 (defun tsi-typescript--indent-line ()
   "Calculate indentation for the current line."
-  (tsi-walk
-   (lambda (node parent is-empty-line)
-     (let ((node-type
-            (if node (tsc-node-type node) nil))
-           (parent-type
-            (if parent (tsc-node-type parent) nil)))
-       (message "node-type %s parent-type %s is-empty-line %s" node-type parent-type is-empty-line)
-       (when is-empty-line
-         (message "indenting empty line"))
-       (cond
-        ;; if this line is empty and the parent's children are always indented
-        ((and
-          is-empty-line
-          (member parent-type tsi-typescript--always-indent-children))
-         tsi-typescript-indent-offset)
-        ;; if this node and the parent node start on the same line
-        ((eq
-          (tsi-typescript--node-start-line node)
-          (tsi-typescript--node-start-line parent))
-         (message
-          "no change; parent and child both begin on line %d"
-          (tsi-typescript--node-start-line node))
-         nil)
-        ;; if node is a member of --always-indent
-        ((member node-type tsi-typescript--always-indent)
-         tsi-typescript-indent-offset)
-        ;; if parent node is a member of --always-indent-children
-        ((member parent-type tsi-typescript--always-indent-children)
-         tsi-typescript-indent-offset)
-        ;; type FooBar = "foo" | "bar" in Typescript resolves to the following AST:
-        ;; (type_alias_declaration (union_type (union_type (...))))
-        ;; , i.e., the tokens are parent/child instead of siblings
-        ((eq
-          node-type
-          'union_type)
-         
-        ;; handle jsx_element
-        ((eq
-          parent-type
-          'jsx_element)
-         (if (eq
-              node-type
-              'jsx_closing_element)
-             nil
-           tsi-typescript-indent-offset))
-        ;; fallback: do nothing
-        (t nil))))))
+  (tsi-walk #'tsi-typescript--get-indent-info))
 
 (defun tsi-typescript--outdent-line ()
   "Outdents by `tsi-typescript-indent-offset`."

@@ -1,4 +1,4 @@
-(require 'tsi-engine)
+(require 'tsi)
 
 (defcustom tsi-typescript-indent-offset 2
   "Default indent level."
@@ -28,7 +28,7 @@
 
 (defun tsi-typescript--indent-line ()
   "Calculate indentation for the current line."
-  (tsi-engine-walk
+  (tsi-walk
    (lambda (node parent is-empty-line)
      (let ((node-type
             (if node (tsc-node-type node) nil))

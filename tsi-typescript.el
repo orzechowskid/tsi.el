@@ -23,8 +23,7 @@
     object_pattern
     object_type
     parenthesized_expression
-    statement_block
-    type_alias_declaration)
+    statement_block)
   "Node types for which indentation of children always applies.")
 
 (defun tsi-typescript--node-start-line (node)
@@ -98,8 +97,10 @@
      ;; debug
      (t (progn (message "n/a") nil)))))
 
+;; exposed for testing purposes
+;;;###autoload
 (defun tsi-typescript--indent-line ()
-  "Calculate indentation for the current line."
+  "Internal function.  Calculate indentation for the current line."
   (tsi-walk #'tsi-typescript--get-indent-info))
 
 (defun tsi-typescript--outdent-line ()

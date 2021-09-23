@@ -5,7 +5,11 @@
   "Internal function.  applies an indent function to each line of text in TXT."
   (with-temp-buffer
     (insert txt)
+    (goto-char (point-min))
+    (while (not (eobp))
+      (beginning-of-line)
+      ;; indent
+      (forward-line))
     (buffer-string)))
-  
-(provide 'tsi-test)
+
 ;;; tsi.test.el ends here

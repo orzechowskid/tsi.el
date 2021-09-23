@@ -1,31 +1,45 @@
 (require 'buttercup)
-(require 'tsi "./tsi.el")
-(require 'tsi-typescript "./tsi-typescript.el")
-(require 'tsi-test "./tsi.test.el")
+(require 'typescript-mode)
 
-(describe "union types"
-  (it "properly indents union types where the first option is not on a separate line"
+(load "./tsi.el")
+(load "./tsi-typescript.el")
+
+(buttercup-define-matcher :to-be-indented (tst-obj-fn)
+  (let ((txt
+         (funcall tst-obj-fn)))
+    (message "txt: >%s<" txt)
+    (with-temp-buffer
+      (setq-local indent-tabs-mode nil)
+      (typescript-mode)
+      (tree-sitter-mode t)
+      (beginning-of-buffer)
+      (insert txt)
+      (indent-rigidly (point-min) (point-max) -100)
+      (message "1buffer: >%s<" (buffer-string))
+      (beginning-of-buffer)
+      (while (not (eobp))
+        (beginning-of-line)
+        (tsi-typescript--indent-line)
+        (forward-line))
+      (message "2buffer: >%s<" (buffer-string))
+      (if (eq
+           txt
+           (buffer-string))
+          t
+        `(nil . ,(format "expected:\n%s\nreceived:\n%s\n\n" txt (buffer-string)))))))
+
+(describe "indenting union types"
+  (xit "properly indents when the first option is not on a separate line"
     (expect
-     (tsi-test-indent "
-type FooBar = 'foo'
-| 'bar';
-")
-     :to-equal
      "
 type FooBar = 'foo'
-  | 'bar';
-"))
+       | 'bar';
+" :to-be-indented))
 
-  (it "properly indents union types where the first option is on a separate line"
+  (it "properly indents when the first option is on a separate line"
     (expect
-     (tsi-test--indent "
-type FooBar =
-| 'foo'
-| 'bar';
-")
-     :to-equal
      "
 type FooBar =
   | 'foo'
   | 'bar';
-")))
+" :to-be-indented)))

@@ -1,3 +1,0 @@
-type FooBar =
-| "foo"
-| "bar";

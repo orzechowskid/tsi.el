@@ -9,105 +9,186 @@
   "Default indent level."
   :type 'number)
 
-(defvar tsi-typescript--always-indent
-  '(jsx_attribute
-    literal_type)
-  "Node types for which indentation always applies.")
+(defun tsi-typescript--get-indent-for (current-node parent-node)
+  "Returns an indentation operation for the given CURRENT-NODE and PARENT-NODE."
+  (let* ((current-type
+          (tsc-node-type current-node))
+         (parent-type
+          (tsc-node-type parent-node)))
 
-(defvar tsi-typescript--always-indent-children
-  '(formal_parameters
-    if_statement
-    ;; jsx_element is a parent of jsx_closing_element, which we do not want to indent
-    ;; jsx_element
-    object
-    object_pattern
-    object_type
-    parenthesized_expression
-    statement_block)
-  "Node types for which indentation of children always applies.")
-
-(defun tsi-typescript--node-start-line (node)
-  "Returns the number of the line containing the first byte of NODE."
-  (if node
-      (line-number-at-pos (tsc-node-start-position node))
-    1))
-
-(defun tsi-typescript--get-indent-info (node parent is-empty-line)
-  "Calculate relative indentation for the current NODE and its PARENT."
-  (let ((node-type
-         (if node (tsc-node-type node) nil))
-        (parent-type
-         (if parent (tsc-node-type parent) nil)))
-    (when is-empty-line
-      (message "indenting empty line"))
-    ;; TODO: (if is-empty-line (cond ...) (cond...)) maybe?
-    ;; TODO: when is-empty-line is t, examine the last token on the previous line
-    ;; TODO: handle ERROR nodes
     (cond
-     ;; if this line is empty and the parent's children are always indented
-     ((and
-       is-empty-line
-       (member parent-type tsi-typescript--always-indent-children))
-      (message "+ is empty line and parent's children are always indented")
-      tsi-typescript-indent-offset)
-     ;; if node is a member of --always-indent
-     ((member node-type tsi-typescript--always-indent)
-      (message "+ this node is always indented")
-      tsi-typescript-indent-offset)
-     ;; if parent node is a member of --always-indent-children
-     ((member parent-type tsi-typescript--always-indent-children)
-      (message "+ parent's children are always indented")
-      tsi-typescript-indent-offset)
-     ;; handle union_type
+     ((eq
+       parent-type
+       'arguments)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'array)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'arrow_function)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'class_body)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'export_clause)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'jsx_element)
+      (if (and
+           (tsc-node-named-p current-node)
+           (not (eq
+                 current-type
+                 'jsx_closing_element)))
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'jsx_fragment)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'jsx_opening_element)
+      (if (and
+           (tsc-node-named-p current-node)
+           (not (eq
+                 current-type
+                 'jsx_closing_element)))
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'jsx_self_closing_element)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'lexical_declaration)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'named_imports)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'object)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'object_pattern)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'object_type)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'parenthesized_expression)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'statement_block)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'switch_body)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'switch_case)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'type_arguments)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'ternary_expression)
+      (if (or
+           (equal
+            (tsc-node-text current-node)
+            "?")
+           (equal
+            (tsc-node-text current-node)
+            ":"))
+          tsi-typescript-indent-offset
+        nil))
+
      ((eq
        parent-type
        'union_type)
-      nil)
-     ;; ((eq
-     ;;   node-type
-     ;;   'union_type)
-     ;;  (if (eq
-     ;;       parent-type
-     ;;       'union_type)
-          
-     ;;      ;; debug
-     ;;      (progn (message "using parent's indentation for this union_type")
-     ;;             (message "next node will be %s ; next parent will be %s" (tsc-node-type parent) (tsc-node-type (tsc-get-parent parent)))
-     ;;             (tsi-typescript--get-indent-info parent (tsc-get-parent parent) is-empty-line))
-     ;;    tsi-typescript-indent-offset))
-     ;; indent all children of jsx_element except for jsx_closing_element
-     ((and
-       (eq
-        parent-type
-        'jsx_element)
-       (not (eq
-             node-type
-             'jsx_closing_element)))
-      (mesage "+ parent is jsx_element and child is not jsx_closing_element")
       tsi-typescript-indent-offset)
-     ;; if this node and the parent node start on the same line
-     ((eq
-       (tsi-typescript--node-start-line node)
-       (tsi-typescript--node-start-line parent))
-      (message
-       "no change; parent and child both begin on line %d"
-       (tsi-typescript--node-start-line node))
-      nil)
-     ;; fallback: do nothing
-     ;; debug
-     (t (progn (message "n/a") nil)))))
+
+     (t nil))))
 
 ;; exposed for testing purposes
 ;;;###autoload
 (defun tsi-typescript--indent-line ()
   "Internal function.  Calculate indentation for the current line."
-  (tsi-walk #'tsi-typescript--get-indent-info))
+  (tsi-walk #'tsi-typescript--get-indent-for))
 
 (defun tsi-typescript--outdent-line ()
   "Outdents by `tsi-typescript-indent-offset`."
   (interactive)
   (let* ((current-indentation
-          (progn
+          (save-excursion
             (back-to-indentation)
             (current-column)))
          (new-indentation

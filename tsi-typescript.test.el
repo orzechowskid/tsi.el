@@ -1,14 +1,14 @@
 (require 'tsi-typescript)
 
 (add-to-list 'tree-sitter-major-mode-language-alist '(fundamental-mode . tsx))
-(setq tsi--test-indent-fn (lambda () (tsi-typescript--indent-line)))
+(setq tsi--test-indent-fn 'tsi-typescript--indent-line)
 
 (describe "indenting imports"
   (it "properly indents when named imports are on a separate line"
     (expect
      "
 import {
-  useState
+   useState
 } from 'react';
 "
      :to-be-indented))
@@ -78,7 +78,7 @@ type Foo = Omit<
 "
      :to-be-indented)))
 
-(describe "indenting union types"
+(xdescribe "indenting union types"
   (it "properly indents when the first option is not on a separate line"
     (expect
      "
@@ -161,5 +161,67 @@ const x = [{
 }, {
   foo: false
 }];
+"
+     :to-be-indented)))
+
+(describe "indenting function arguments"
+  (it "properly indents function arguments"
+    (expect
+     "
+function foo(
+  a,
+  b
+) {
+  return a + b;
+}
+"
+     :to-be-indented))
+  (it "properly indents anonymous function arguments"
+    (expect
+     "
+const foo = (
+  a,
+  b
+) => a + b;
+"
+     :to-be-indented)))
+
+(describe "indenting JSX"
+  (it "properly indents attributes of JSX elements"
+    (expect
+     "
+<div
+  id='foo'
+  className='bar'
+>
+</div>
+"
+     :to-be-indented))
+
+  (it "properly indents attributes of self-closing JSX elements"
+    (expect
+     "
+<div
+  id='foo'
+  className='bar'
+/>
+"
+     :to-be-indented))
+
+  (it "properly indents child elements"
+    (expect
+     "
+<div>
+  <span />
+</div>
+"
+     :to-be-indented))
+
+  (it "properly indents JSX expressions"
+    (expect
+     "
+<div>
+  {foo}
+</div>
 "
      :to-be-indented)))

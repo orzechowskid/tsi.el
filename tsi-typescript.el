@@ -61,6 +61,13 @@
 
      ((eq
        parent-type
+       'formal_parameters)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
        'if_statement)
       (if (and
            (tsc-node-named-p current-node)

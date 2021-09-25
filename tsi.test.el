@@ -32,18 +32,21 @@
       ;; set this in a (before-all) form in your test file
       (setq-local indent-line-function #'tsi--test-indent-fn)
       (tree-sitter-mode t)
-      (beginning-of-buffer)
       (insert txt)
       (indent-rigidly (point-min) (point-max) -100) ;; this could be done better
-      (beginning-of-buffer)
-      (while (not (eobp))
+      (while (not (bobp))
         (beginning-of-line)
         (funcall tsi--test-indent-fn)
-        (forward-line))
+        (forward-line -1))
       (if (equal
            txt
            (buffer-string))
           t
         `(nil . ,(format "\nexpected:\n<<%s<<\nreceived:\n>>%s>>\n\n" txt (buffer-string)))))))
+
+(defun tsi-run-discovered ()
+    ""
+  (ignore-errors
+    (buttercup-run-discover)))
 
 ;;; tsi.test.el ends here

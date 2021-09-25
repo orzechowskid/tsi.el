@@ -1,6 +1,27 @@
-;;; tsi.el --- tree-sitter indentation -*- lexical-binding: t; -*-
-;;; Summary:
+;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
+
+;;; Version: 1.0.0
+
+;;; Author: Dan Orzechowski
+
+;;; URL: https://github.com/orzechowskid/tsi.el
+
+;;; Package-Requires: ((tsi "1.0.0"))
+
+;;; SPDX-License-Identifier: GPLv3
+
 ;;; Commentary:
+;; a file containing indentation rules for Javascript/Typescript, including JSX.  Enable
+;; it via `M-x tsi-typescript-mode`, or configure as part of your major-mode hook:
+;;
+;; (add-hook 'typescript-mode-hook  (lambda () (tsi-typescript-mode t)))
+;;
+;; Enabling `tsi-typescript-mode` will set the current buffer's `indent-line-function`,
+;; as well as register an outdent function (<S-iso-lefttab>, aka <backtab>).  I should
+;; make that configurable at some point.
+;;
+;; Indentation amount is controlled by the value of `tsi-typescript-indent-offset`.
+
 ;;; Code:
 
 (require 'tsi)
@@ -209,7 +230,6 @@
       (if (tsc-node-named-p current-node)
           tsi-typescript-indent-offset
         nil))
-;;      tsi-typescript-indent-offset)
 
      ((eq
        parent-type
@@ -223,7 +243,9 @@
 ;; exposed for testing purposes
 ;;;###autoload
 (defun tsi-typescript--indent-line ()
-  "Internal function.  Calculate indentation for the current line."
+  "Internal function.
+
+  Calculate indentation for the current line."
   (tsi-walk #'tsi-typescript--get-indent-for))
 
 (defun tsi-typescript--outdent-line ()

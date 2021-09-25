@@ -1,6 +1,9 @@
 (require 'tsi-typescript)
 
+;; our custom matcher doesn't set a major mode, so we associate fundamental-mode with
+;; a tree-sitter grammar here
 (add-to-list 'tree-sitter-major-mode-language-alist '(fundamental-mode . tsx))
+;; tell tsi.el to use the tsi-typescript indent function
 (setq tsi--test-indent-fn 'tsi-typescript--indent-line)
 
 (describe "indenting imports"
@@ -8,7 +11,7 @@
     (expect
      "
 import {
-   useState
+  useState
 } from 'react';
 "
      :to-be-indented))
@@ -225,3 +228,5 @@ const foo = (
 </div>
 "
      :to-be-indented)))
+
+(buttercup-run-discover)

@@ -14,13 +14,23 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'buttercup)
+(straight-use-package 'tree-sitter)
+(straight-use-package 'tree-sitter-langs)
+
+(require 'buttercup)
+(require 'tree-sitter)
+(require 'tree-sitter-langs)
+
+(defvar tsi--test-indent-fn
+  nil)
 
 (buttercup-define-matcher :to-be-indented (tst-obj-fn)
   (let ((txt
          (funcall tst-obj-fn)))
     (with-temp-buffer
       (setq-local indent-tabs-mode nil)
-      (typescript-mode)
+      ;; set this in a (before-all) form in your test file
+      (setq-local indent-line-function #'tsi--test-indent-fn)
       (tree-sitter-mode t)
       (beginning-of-buffer)
       (insert txt)
@@ -28,13 +38,12 @@
       (beginning-of-buffer)
       (while (not (eobp))
         (beginning-of-line)
-        (tsi-typescript--indent-line)
+        (funcall tsi--test-indent-fn)
         (forward-line))
       (if (equal
            txt
            (buffer-string))
           t
-        `(nil . ,(format "expected:\n<<%s<<\nreceived:\n>>%s>>\n\n" txt (buffer-string)))))))
-
+        `(nil . ,(format "\nexpected:\n<<%s<<\nreceived:\n>>%s>>\n\n" txt (buffer-string)))))))
 
 ;;; tsi.test.el ends here

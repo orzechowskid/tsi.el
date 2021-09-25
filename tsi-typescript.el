@@ -54,6 +54,24 @@
 
      ((eq
        parent-type
+       'export_statement)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
+       'if_statement)
+      (if (and
+           (tsc-node-named-p current-node)
+           (not (eq
+                 current-type
+                 'else_clause)))
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
        'jsx_element)
       (if (and
            (tsc-node-named-p current-node)
@@ -153,6 +171,13 @@
 
      ((eq
        parent-type
+       'type_alias_declaration)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+
+     ((eq
+       parent-type
        'type_arguments)
       (if (tsc-node-named-p current-node)
           tsi-typescript-indent-offset
@@ -174,7 +199,17 @@
      ((eq
        parent-type
        'union_type)
-      tsi-typescript-indent-offset)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
+;;      tsi-typescript-indent-offset)
+
+     ((eq
+       parent-type
+       'variable_declarator)
+      (if (tsc-node-named-p current-node)
+          tsi-typescript-indent-offset
+        nil))
 
      (t nil))))
 

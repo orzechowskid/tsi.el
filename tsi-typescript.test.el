@@ -1,8 +1,7 @@
-(straight-use-package 'typescript-mode)
+(require 'tsi-typescript)
 
-(require 'typescript-mode)
-
-(setq buttercup-suites nil)
+(add-to-list 'tree-sitter-major-mode-language-alist '(fundamental-mode . tsx))
+(setq tsi--test-indent-fn (lambda () (tsi-typescript--indent-line)))
 
 (describe "indenting imports"
   (it "properly indents when named imports are on a separate line"

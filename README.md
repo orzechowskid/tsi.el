@@ -1,9 +1,15 @@
 # tsi.el: tree-sitter indentation minor mode for Emacs
 
+use the syntax tree provided by [the `tree-sitter` minor mode](https://emacs-tree-sitter.github.io/tree-sitter-mode/) as the basis for indentation.
+
+Supported languages:
+
+- Javascript/Typescript/JSX/TSX
+
 ## Installation
 
 0. Dependencies: make sure you have [`tree-sitter`](https://emacs-tree-sitter.github.io/installation/) installed already.
-1. Install: download this package and place `tsi.el`, and the desired language-specific `tsi-<foo>.el` files,  inside a directory on your `load-path`
+1. Install: download this package and place `tsi.el`, and the desired language-specific `tsi-<foo>.el` files,  inside a directory on your `load-path`.  `straight.el` works well for this too.
 2. Require: `(require 'tsi-<foo>)`
 3. Enable: `(tsi-<foo>-mode t)`
 

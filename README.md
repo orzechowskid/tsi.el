@@ -2,7 +2,7 @@
 
 ## Installation
 
-0. Dependencies: make sure you have [`tree-sitter`](https://emacs-tree-sitter.github.io/installation/)` installed already.
+0. Dependencies: make sure you have [`tree-sitter`](https://emacs-tree-sitter.github.io/installation/) installed already.
 1. Install: download this package and place `tsi.el`, and the desired language-specific `tsi-<foo>.el` files,  inside a directory on your `load-path`
 2. Require: `(require 'tsi-<foo>)`
 3. Enable: `(tsi-<foo>-mode t)`

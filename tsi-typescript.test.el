@@ -1,3 +1,7 @@
+;; set up some test libraries/utils/variables
+(load "tsi.test")
+
+;; require our language-specific file
 (require 'tsi-typescript)
 
 ;; our custom matcher doesn't set a major mode, so we associate fundamental-mode with

@@ -44,9 +44,6 @@
           t
         `(nil . ,(format "\nexpected:\n<<%s<<\nreceived:\n>>%s>>\n\n" txt (buffer-string)))))))
 
-(defun tsi-run-discovered ()
-    ""
-  (ignore-errors
-    (buttercup-run-discover)))
+(setq buttercup-stack-frame-style 'omit)
 
 ;;; tsi.test.el ends here

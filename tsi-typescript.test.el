@@ -203,6 +203,17 @@ const foo = (
       :to-be-indented)))
 
 (describe
+ "indenting ternaries"
+ (it "properly indents consequents and alternates on their own lines"
+     (expect
+      "
+const foo = bar
+  ? 1
+  : 2;
+"
+      :to-be-indented)))
+
+(describe
  "indenting comments"
  (it "properly indents single-line comments"
      (expect

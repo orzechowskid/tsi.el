@@ -5,6 +5,7 @@ use the syntax tree provided by [the `tree-sitter` minor mode](https://emacs-tre
 Supported languages:
 
 - Javascript/Typescript/JSX/TSX
+- JSON
 
 ## Installation
 

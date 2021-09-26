@@ -100,13 +100,21 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
           (bolp)))
        (should-save-excursion ;; true if point is after any leading whitespace
         (< first-non-blank-pos original-position))
-       (current-node
+       (highest-node
         (tsi--highest-node-at
          (save-excursion
            (back-to-indentation)
            (tree-sitter-node-at-point))))
        (parent-node
-        (tsc-get-parent current-node))
+        (or
+         (tsc-get-parent highest-node)
+         highest-node))
+       (current-node
+        (if (eq
+             parent-node
+             highest-node)
+            (tree-sitter-node-at-point)
+          highest-node))
        (indent-ops
         '()))
     (while parent-node

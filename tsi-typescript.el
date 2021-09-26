@@ -26,219 +26,252 @@
 
 (require 'tsi)
 
+(defgroup tsi-typescript nil
+  "Minor mode for indenting JS[X]/TS[X] using the tree-sitter CST."
+  :group 'programming
+  :prefix "tsi-typescript-")
+
 (defcustom tsi-typescript-indent-offset 2
   "Default indent level."
-  :type 'number)
+  :type 'number
+  :group 'tsi-typescript)
 
 (defun tsi-typescript--get-indent-for (current-node parent-node)
   "Returns an indentation operation for the given CURRENT-NODE and PARENT-NODE."
+  (tsi--debug "nt: %s" (tsc-node-text current-node))
   (let* ((current-type
           (tsc-node-type current-node))
          (parent-type
-          (tsc-node-type parent-node)))
+          (tsc-node-type parent-node))
+         (child-indentation
+          (cond
+           ((eq
+             current-type
+             'comment)
+            (if (save-excursion
+                  (beginning-of-line)
+                  (back-to-indentation)
+                  (looking-at-p "\\*"))
+                1
+              nil))
 
-    (cond
-     ((eq
-       parent-type
-       'arguments)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           (t nil)))
+         (parent-indentation
+          (cond
+           ((eq
+             parent-type
+             'arguments)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'array)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'array)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'arrow_function)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'arrow_function)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'class_body)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'class_body)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'export_clause)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'export_clause)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'export_statement)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'export_statement)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'formal_parameters)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'formal_parameters)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'if_statement)
-      (if (and
-           (tsc-node-named-p current-node)
-           (not (eq
-                 current-type
-                 'else_clause)))
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'if_statement)
+            (if (and
+                 (tsc-node-named-p current-node)
+                 (not (eq
+                       current-type
+                       'else_clause)))
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'jsx_element)
-      (if (and
-           (tsc-node-named-p current-node)
-           (not (eq
-                 current-type
-                 'jsx_closing_element)))
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'jsx_element)
+            (if (and
+                 (tsc-node-named-p current-node)
+                 (not (eq
+                       current-type
+                       'jsx_closing_element)))
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'jsx_fragment)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'jsx_fragment)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'jsx_opening_element)
-      (if (and
-           (tsc-node-named-p current-node)
-           (not (eq
-                 current-type
-                 'jsx_closing_element)))
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'jsx_opening_element)
+            (if (and
+                 (tsc-node-named-p current-node)
+                 (not (eq
+                       current-type
+                       'jsx_closing_element)))
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'jsx_self_closing_element)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'jsx_self_closing_element)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'lexical_declaration)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'lexical_declaration)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'named_imports)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'member_expression)
+            (if (equal
+                 (tsc-node-text current-node)
+                 ".")
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'object)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'named_imports)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'object_pattern)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'object)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'object_type)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'object_pattern)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'parenthesized_expression)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'object_type)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'statement_block)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'parenthesized_expression)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'switch_body)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'statement_block)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'switch_case)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'switch_body)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'type_alias_declaration)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'switch_case)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'type_arguments)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'type_alias_declaration)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'ternary_expression)
-      (if (or
-           (equal
-            (tsc-node-text current-node)
-            "?")
-           (equal
-            (tsc-node-text current-node)
-            ":"))
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'type_arguments)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'union_type)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'ternary_expression)
+            (if (or
+                 (equal
+                  (tsc-node-text current-node)
+                  "?")
+                 (equal
+                  (tsc-node-text current-node)
+                  ":"))
+                tsi-typescript-indent-offset
+              nil))
 
-     ((eq
-       parent-type
-       'variable_declarator)
-      (if (tsc-node-named-p current-node)
-          tsi-typescript-indent-offset
-        nil))
+           ((eq
+             parent-type
+             'union_type)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
-     (t nil))))
+           ((eq
+             parent-type
+             'variable_declarator)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
+           (t nil))))
+    (tsi--debug "child indentation: %s parent indentation: %s" child-indentation parent-indentation)
+    (+
+     (or parent-indentation 0)
+     (or child-indentation 0))))
 
 ;; exposed for testing purposes
 ;;;###autoload

@@ -10,9 +10,10 @@ Supported languages:
 ## Installation
 
 0. Dependencies: make sure you have [`tree-sitter`](https://emacs-tree-sitter.github.io/installation/) installed already.
-1. Install: download this package and place `tsi.el`, and the desired language-specific `tsi-<foo>.el` files,  inside a directory on your `load-path`.  or install this repository via `straight.el`.
-2. Require: `(require 'tsi-<foo>)`
-3. Enable: `(tsi-<foo>-mode t)`
+1. Install: download this package and place `tsi.el`, and the desired language-specific `tsi-<foo>.el` files,  inside a directory on your `load-path`.
+  or install this repository via `straight.el` which does these things for you: `(straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))`
+4. Require: `(require 'tsi-<foo>)`
+5. Enable: `(tsi-<foo>-mode t)`
 
 ## Configuration
 

@@ -234,6 +234,13 @@
 
            ((eq
              parent-type
+             'type_annotation)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
+           ((eq
+             parent-type
              'type_arguments)
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset

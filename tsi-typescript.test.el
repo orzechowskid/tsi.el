@@ -150,6 +150,21 @@ switch (foo) {
       :to-be-indented)))
 
 (describe
+ "indenting object contents"
+ (it "properly indents multi-line type declarations"
+     (expect
+      "
+interface FooRecord {
+  foo:
+    Record<
+      string,
+      Foo
+    >
+};
+"
+      :to-be-indented)))
+
+(describe
  "indenting array contents"
  (it "properly indents child identifiers"
      (expect

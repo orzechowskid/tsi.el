@@ -38,7 +38,6 @@
 
 (defun tsi-typescript--get-indent-for (current-node parent-node)
   "Returns an indentation operation for the given CURRENT-NODE and PARENT-NODE."
-  (tsi--debug "nt: %s" (tsc-node-text current-node))
   (let* ((current-type
           (tsc-node-type current-node))
          (parent-type

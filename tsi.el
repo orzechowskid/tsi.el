@@ -123,9 +123,7 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
        (funcall
         indent-info-fn
         current-node
-        (if empty-line
-            current-node
-          parent-node))
+        parent-node)
        indent-ops)
       (tsi--debug "op: %s" (car indent-ops))
       ;; get outermost node on the line where parent starts

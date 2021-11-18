@@ -87,6 +87,13 @@
 
            ((eq
              parent-type
+             'enum_body)
+            (if (eq current-type 'enum_assignment)
+                tsi-typescript-indent-offset
+              nil))
+
+           ((eq
+             parent-type
              'export_clause)
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset

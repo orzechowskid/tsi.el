@@ -206,6 +206,13 @@
 
            ((eq
              parent-type
+             'pair)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
+           ((eq
+             parent-type
              'parenthesized_expression)
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset

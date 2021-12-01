@@ -263,12 +263,21 @@ let foo;
 
 (describe
  "indenting enums"
- (it "properly indents Typescript enums"
+ (it "properly indents Typescript enums with explicit values"
      (expect
       "
 enum FooBar {
   foo = 'foo',
   bar = 'bar'
+}
+"
+      :to-be-indented))
+ (it "properly indents Typescript enums with implicit values"
+     (expect
+      "
+enum FooBar {
+  foo,
+  bar
 }
 "
       :to-be-indented)))

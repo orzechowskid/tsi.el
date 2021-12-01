@@ -88,7 +88,8 @@
            ((eq
              parent-type
              'enum_body)
-            (if (eq current-type 'enum_assignment)
+            (if (or (eq current-type 'enum_assignment)
+                    (eq current-type 'property_identifier))
                 tsi-typescript-indent-offset
               nil))
 

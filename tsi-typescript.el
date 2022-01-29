@@ -1,6 +1,6 @@
 ;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
 
-;;; Version: 1.0.0
+;;; Version: 1.1.0
 
 ;;; Author: Dan Orzechowski
 

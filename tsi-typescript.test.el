@@ -323,4 +323,16 @@ enum FooBar {
 "
       :to-be-indented)))
 
+(describe
+ "indenting whitespace"
+ ;; NB: you might have to make whitespace visible in order for some of these tests to make sense :)
+ (it "properly indents lines inside of statement blocks"
+     (expect
+      "
+function() {
+  
+}
+"
+      :to-be-indented)))
+
 (buttercup-run-discover)

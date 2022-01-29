@@ -54,6 +54,15 @@
                 1
               nil))
 
+           ((eq
+             current-type
+             'statement_block)
+            (if (and
+                 (> (line-number-at-pos) (car (tsc-node-start-point current-node)))
+                 (< (line-number-at-pos) (car (tsc-node-end-point current-node))))
+                tsi-typescript-indent-offset
+              nil))
+
            (t nil)))
          (parent-indentation
           (cond

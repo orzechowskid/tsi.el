@@ -82,7 +82,7 @@ Returns the uppermost tree node sharing the same line as NODE."
   "Indents the current line using information provided by INDENT-INFO-FN.
 
 INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
-
+  (tsi--debug "begin indentation")
   (let*
       ;; credit to
       ;; https://codeberg.org/FelipeLema/tree-sitter-indent.el/src/branch/main/tree-sitter-indent.el
@@ -118,7 +118,7 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
        (indent-ops
         '()))
     (while parent-node
-      (tsi--debug "parent: %s line %d, child: %s line %d" (tsc-node-type parent-node) (tsi--node-start-line parent-node) (tsc-node-type current-node) (tsi--node-start-line current-node))
+      (tsi--debug "parent: %s line %d, current: %s line %d" (tsc-node-type parent-node) (tsi--node-start-line parent-node) (tsc-node-type current-node) (tsi--node-start-line current-node))
       (push
        (funcall
         indent-info-fn

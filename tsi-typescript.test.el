@@ -91,7 +91,7 @@ type Foo = Omit<
 
 (describe
  "indenting union types"
- (xit "properly indents when the first option is not on a separate line"
+ (it "properly indents when the first option is not on a separate line"
      (expect
       "
 type FooBar = 'foo'

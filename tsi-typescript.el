@@ -1,6 +1,6 @@
 ;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
 
-;;; Version: 1.1.0
+;;; Version: 1.3.0
 
 ;;; Author: Dan Orzechowski
 
@@ -54,9 +54,19 @@
                 1
               nil))
 
-           ((eq
-             current-type
-             'statement_block)
+           ((or
+             (eq
+              current-type
+              'statement_block)
+             (eq
+              current-type
+              'object_type)
+             (eq
+              current-type
+              'enum_body)
+             (eq
+              current-type
+              'import_clause))
             (if (and
                  (> (line-number-at-pos) (car (tsc-node-start-point current-node)))
                  (< (line-number-at-pos) (car (tsc-node-end-point current-node))))
@@ -76,13 +86,6 @@
            ((eq
              parent-type
              'array)
-            (if (tsc-node-named-p current-node)
-                tsi-typescript-indent-offset
-              nil))
-
-           ((eq
-             parent-type
-             'arrow_function)
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset
               nil))
@@ -126,11 +129,9 @@
            ((eq
              parent-type
              'if_statement)
-            (if (and
-                 (tsc-node-named-p current-node)
-                 (not (eq
-                       current-type
-                       'else_clause)))
+            (if (eq
+                 current-type
+                 'expression_statement)
                 tsi-typescript-indent-offset
               nil))
 
@@ -231,7 +232,9 @@
            ((eq
              parent-type
              'statement_block)
-            (if (tsc-node-named-p current-node)
+            (if (and
+                 (> (line-number-at-pos) (car (tsc-node-start-point parent-node)))
+                 (< (line-number-at-pos) (car (tsc-node-end-point parent-node))))
                 tsi-typescript-indent-offset
               nil))
 
@@ -286,9 +289,17 @@
            ((eq
              parent-type
              'union_type)
-            (if (tsc-node-named-p current-node)
-                tsi-typescript-indent-offset
-              nil))
+            (cond
+              ((tsc-node-named-p current-node)
+               tsi-typescript-indent-offset)
+              ((not (eq
+                     (tsc-node-type (tsi--highest-node-on-same-line-as parent-node))
+                     'union_type))
+               ;; type FooBar =
+               ;;   | Foo
+               ;;   | Bar;
+               tsi-typescript-indent-offset)
+              (t nil)))
 
            ((eq
              parent-type

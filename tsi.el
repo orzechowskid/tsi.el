@@ -76,6 +76,11 @@ Returns the uppermost tree node sharing the same line as NODE."
             (tree-sitter-node-at-point))))
     (tsi--highest-node-at node-at-new-point)))
 
+(defun tsi--current-line-empty-p ()
+  (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
+
+(defun tsi--current-line-gt-sign-only-p ()
+  (string-match-p "\\`[>[:space:]]*$" (thing-at-point 'line)))
 
 ;;;###autoload
 (defun tsi-walk (indent-info-fn)
@@ -143,6 +148,26 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
                (t accum)))
             indent-ops
             0)))
+
+      (let* ((node-at-point (tree-sitter-node-at-point))
+             (current-type (tsc-node-type node-at-point))
+             (parent-node (tsc-get-parent node-at-point)))
+        (if parent-node
+            (if (and (derived-mode-p 'typescript-mode)
+                     (or
+                      ;; empty line inside JSX tag
+                      (and
+                       (tsi--current-line-empty-p)
+                       (or (eq current-type 'jsx_opening_element)
+                           (eq current-type 'jsx_self_closing_element)))
+                      ;; JSX > bit of tag
+                      (and
+                       (tsi--current-line-gt-sign-only-p)
+                       (string= current-type ">")
+                       (eq (tsc-node-type parent-node) 'jsx_opening_element))
+                      ))
+                (setq column (+ column tsi-typescript-indent-offset)))))
+
       (tsi--debug "indenting to column %d" column)
       (if should-save-excursion
           (save-excursion

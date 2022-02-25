@@ -314,13 +314,28 @@
      (or parent-indentation 0)
      (or child-indentation 0))))
 
+
+(defun tsi--current-line-empty-p ()
+  (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
+
+(defun tsi-typescript--get-indent-for-current-line ()
+  (let* ((node-at-point (tree-sitter-node-at-point))
+         (current-type (tsc-node-type node-at-point)))
+    (cond
+     ((and
+       (or (eq current-type 'jsx_opening_element)
+           (eq current-type 'jsx_self_closing_element)
+           (eq current-type 'parenthesized_expression))
+       (tsi--current-line-empty-p)) 2)
+     (t 0))))
+
 ;; exposed for testing purposes
 ;;;###autoload
 (defun tsi-typescript--indent-line ()
   "Internal function.
 
   Calculate indentation for the current line."
-  (tsi-walk #'tsi-typescript--get-indent-for))
+  (tsi-indent-line #'tsi-typescript--get-indent-for #'tsi-typescript--get-indent-for-current-line))
 
 (defun tsi-typescript--outdent-line ()
   "Outdents by `tsi-typescript-indent-offset`."

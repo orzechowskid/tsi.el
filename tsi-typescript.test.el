@@ -333,6 +333,35 @@ function() {
   
 }
 "
+      :to-be-indented))
+
+ (it "properly indents whitepace in multi-line JSX opening elements"
+     (expect
+      "
+<div
+  
+>
+</div>
+"
+      :to-be-indented))
+
+  (it "properly indents whitepace in multi-line JSX self-closing elements"
+     (expect
+      "
+<div
+  
+/>
+"
+      :to-be-indented))
+
+(it "properly indents whitespace in multi-line parenthesis"
+     (expect
+      "
+if (
+  
+) {
+}
+"
       :to-be-indented)))
 
 (buttercup-run-discover)

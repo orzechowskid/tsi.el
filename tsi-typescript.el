@@ -326,7 +326,7 @@
        (or (eq current-type 'jsx_opening_element)
            (eq current-type 'jsx_self_closing_element)
            (eq current-type 'parenthesized_expression))
-       (tsi--current-line-empty-p)) 2)
+       (tsi--current-line-empty-p)) tsi-typescript-indent-offset)
      (t 0))))
 
 ;; exposed for testing purposes

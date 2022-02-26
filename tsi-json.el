@@ -65,7 +65,7 @@
   "Internal function.
 
   Calculate indentation for the current line."
-  (tsi-walk #'tsi-json--get-indent-for))
+  (tsi-indent-line #'tsi-json--get-indent-for))
 
 (defun tsi-json--outdent-line ()
   "Outdents by `tsi-json-indent-offset`."

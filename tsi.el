@@ -76,9 +76,26 @@ Returns the uppermost tree node sharing the same line as NODE."
             (tree-sitter-node-at-point))))
     (tsi--highest-node-at node-at-new-point)))
 
+(defun tsi--indent-line-to (column)
+  "Internal function.
+
+Indents current line to column. If the point is before the first
+non-whitespace character on the line restore point after
+indenting."
+  (let*
+      ((first-non-blank-pos
+        (save-excursion
+          (back-to-indentation)
+          (point)))
+       (should-save-excursion ;; true if point is after any leading whitespace
+        (< first-non-blank-pos (point))))
+    (if should-save-excursion
+        (save-excursion
+          (indent-line-to column))
+      (indent-line-to column))))
 
 ;;;###autoload
-(defun tsi-walk (indent-info-fn)
+(defun tsi--walk (indent-info-fn)
   "Indents the current line using information provided by INDENT-INFO-FN.
 
 INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
@@ -86,20 +103,12 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
   (let*
       ;; credit to
       ;; https://codeberg.org/FelipeLema/tree-sitter-indent.el/src/branch/main/tree-sitter-indent.el
-      ;; for some of these bound variables
-      ((original-position
-        (point))
-       (first-non-blank-pos
-        (save-excursion
-          (back-to-indentation)
-          (point)))
-       (empty-line
+      ;; for some of these bound variables here and in tsi--indent-line-to above.
+      ((empty-line
         (save-excursion
           (end-of-line)
           (skip-chars-backward " \t")
           (bolp)))
-       (should-save-excursion ;; true if point is after any leading whitespace
-        (< first-non-blank-pos original-position))
        (highest-node
         (tsi--highest-node-at
          (save-excursion
@@ -144,10 +153,20 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
             indent-ops
             0)))
       (tsi--debug "indenting to column %d" column)
-      (if should-save-excursion
-          (save-excursion
-            (indent-line-to column))
-        (indent-line-to column)))))
+      column)))
+
+(defun tsi-indent-line (indent-info-fn &optional extra-indent-for-current-line-fn)
+  "Indents the current line the number of characters returned by INDENT-INFO-FN.
+
+If optional EXTRA-INDENT-FOR-CURRENT-LINE-FN is provided, will
+add the extra indentation amount returned by that function to the
+indent column. This is useful to handle special cases for the
+current line.
+"
+  (let* ((indent (or (tsi--walk indent-info-fn) 0))
+         (extra-indent (or (and extra-indent-for-current-line-fn (funcall extra-indent-for-current-line-fn)) 0))
+         (column (+ indent extra-indent)))
+    (tsi--indent-line-to column)))
 
 (provide 'tsi)
 ;;; tsi.el ends here

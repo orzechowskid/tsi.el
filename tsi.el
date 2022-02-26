@@ -1,6 +1,6 @@
 ;;; tsi.el --- tree-sitter indentation -*- lexical-binding: t; -*-
 
-;;; Version: 1.0.0
+;;; Version: 1.1.0
 
 ;;; Author: Dan Orzechowski
 

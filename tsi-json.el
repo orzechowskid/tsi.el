@@ -27,7 +27,7 @@
 (require 'tsi)
 
 (defgroup tsi-json nil
-  "Minor mode for indenting JS[X]/TS[X] using the tree-sitter CST."
+  "Minor mode for indenting JSON using the tree-sitter CST."
   :group 'programming
   :prefix "tsi-json-")
 

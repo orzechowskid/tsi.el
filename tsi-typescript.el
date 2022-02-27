@@ -1,6 +1,6 @@
 ;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
 
-;;; Version: 1.4.0
+;;; Version: 1.5.0
 
 ;;; Author: Dan Orzechowski
 
@@ -44,16 +44,6 @@
           (tsc-node-type parent-node))
          (child-indentation
           (cond
-           ((eq
-             current-type
-             'comment)
-            (if (save-excursion
-                  (beginning-of-line)
-                  (back-to-indentation)
-                  (looking-at-p "\\*"))
-                1
-              nil))
-
            ((or
              (eq
               current-type
@@ -308,11 +298,28 @@
                 tsi-typescript-indent-offset
               nil))
 
-           (t nil))))
-    (tsi--debug "child indentation: %s parent indentation: %s" child-indentation parent-indentation)
+           (t nil)))
+         (comment-indentation
+          (if (and
+               (or
+                (eq
+                 current-type
+                 'comment)
+                (eq
+                 (tsc-node-type
+                  (tsi--highest-node-at current-node))
+                 'program))
+               (save-excursion
+                 (beginning-of-line)
+                 (back-to-indentation)
+                 (looking-at-p "\\*")))
+              1
+            nil)))
+    (tsi--debug "child indentation: %s parent indentation: %s comment indentation: %s" child-indentation parent-indentation comment-indentation)
     (+
      (or parent-indentation 0)
-     (or child-indentation 0))))
+     (or child-indentation 0)
+     (or comment-indentation 0))))
 
 
 (defun tsi--current-line-empty-p ()

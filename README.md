@@ -8,6 +8,7 @@ Supported languages:
 
 - Javascript/Typescript/JSX/TSX
 - JSON
+- CSS/SCSS
 
 ## Installation
 

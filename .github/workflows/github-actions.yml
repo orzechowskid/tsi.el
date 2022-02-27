@@ -8,5 +8,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: install latest git
+        run: |
+          sudo apt update
+          sudo apt install git
       - name: run tests
         run: for i in *.test.el; do emacs -batch -q -L . -l $i; done

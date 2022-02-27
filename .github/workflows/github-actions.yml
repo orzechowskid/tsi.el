@@ -3,7 +3,8 @@ on: [ push ]
 
 jobs:
   run tests
-  runs-on: silex/emacs:latest
+  runs-on: ubuntu-latest
+  container: silex/emacs:latest
   steps:
     - name: checkout
       uses: actions/checkout@v2

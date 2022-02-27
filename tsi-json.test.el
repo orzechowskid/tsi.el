@@ -34,6 +34,15 @@
   ]
 }
 "
+      :to-be-indented))
+ (it "properly indents the right-side of a key/value pair"
+     (expect
+      "
+{
+  \"foo\":
+    true
+}
+"
       :to-be-indented)))
 
 (buttercup-run-discover)

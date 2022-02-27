@@ -11,6 +11,6 @@ jobs:
       - name: install latest git
         run: |
           apt update
-          apt install git
+          apt -y install git
       - name: run tests
         run: for i in *.test.el; do emacs -batch -q -L . -l $i; done

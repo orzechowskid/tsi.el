@@ -1,16 +1,12 @@
-name: run Buttercup tests
+name: unit tests
 on: [ push ]
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    container: silex/emacs:latest
+    container: silex/emacs:27-ci
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: install latest git
-        run: |
-          apt update
-          apt -y install git
       - name: run tests
         run: for i in *.test.el; do emacs -batch -q -L . -l $i; done

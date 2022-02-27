@@ -2,11 +2,11 @@ name: run Buttercup tests
 on: [ push ]
 
 jobs:
-  run tests
-  runs-on: ubuntu-latest
-  container: silex/emacs:latest
-  steps:
-    - name: checkout
-      uses: actions/checkout@v2
-    - name: run tests
-      run: ls
+  run-tests:
+    runs-on: ubuntu-latest
+    container: silex/emacs:latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: run tests
+        run: ls

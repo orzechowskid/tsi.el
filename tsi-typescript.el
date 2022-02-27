@@ -1,6 +1,6 @@
 ;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
 
-;;; Version: 1.5.0
+;;; Version: 1.5.1
 
 ;;; Author: Dan Orzechowski
 
@@ -364,7 +364,8 @@
 ;;;###autoload
 (define-minor-mode tsi-typescript-mode
   "Use tree-sitter to calculate indentation for Typescript buffers."
-  nil nil
+  :group 'tsi-typescript
+
   (make-sparse-keymap)
   (cond
    (tsi-typescript-mode

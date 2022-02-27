@@ -2,6 +2,8 @@
 
 use the syntax tree provided by [the `tree-sitter` minor mode](https://emacs-tree-sitter.github.io/tree-sitter-mode/) as the basis for indentation.
 
+![tests?](https://github.com/orzechowskid/tsi.el/actions/workflows/github-actions.yml/badge.svg?branch=main)
+
 Supported languages:
 
 - Javascript/Typescript/JSX/TSX

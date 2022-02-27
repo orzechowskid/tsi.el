@@ -9,4 +9,4 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: run tests
-        run: ls
+        run: for i in *.test.el; do emacs -batch -q -L . -l $i; done

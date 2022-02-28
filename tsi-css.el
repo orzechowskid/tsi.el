@@ -1,6 +1,6 @@
 ;;; tsi-css.el --- tree-sitter indentation for CSS and friends -*- lexical-binding: t; -*-
 
-;;; Version: 1.0.1
+;;; Version: 1.0.2
 
 ;;; Author: Dan Orzechowski
 
@@ -123,7 +123,7 @@
     "Use tree-sitter to calculate indentation for CSS buffers."
   :group 'tsi-css
 
-  (make-sparse-keymap)
+  (setq tsi-css-mode-map (make-sparse-keymap))
   (cond
    (tsi-css-mode
     ;; enabling mode

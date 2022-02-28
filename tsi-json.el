@@ -1,6 +1,6 @@
 ;;; tsi-json.el --- tree-sitter indentation for JSON -*- lexical-binding: t; -*-
 
-;;; Version: 1.1.1
+;;; Version: 1.1.2
 
 ;;; Author: Dan Orzechowski
 
@@ -94,7 +94,7 @@
   "Use tree-sitter to calculate indentation for JSON buffers."
   :group 'tsi-json
 
-  (make-sparse-keymap)
+  (setq tsi-json-mode-map (make-sparse-keymap))
   (cond
    (tsi-json-mode
     ;; enabling mode

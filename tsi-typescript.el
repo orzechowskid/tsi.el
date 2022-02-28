@@ -365,8 +365,8 @@
 (define-minor-mode tsi-typescript-mode
   "Use tree-sitter to calculate indentation for Typescript buffers."
   :group 'tsi-typescript
+  :keymap (make-sparse-keymap)
 
-  (setq tsi-typescript-mode-map (make-sparse-keymap))
   (cond
    (tsi-typescript-mode
     ;; enabling mode

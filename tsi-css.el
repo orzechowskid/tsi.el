@@ -122,8 +122,8 @@
 (define-minor-mode tsi-css-mode
     "Use tree-sitter to calculate indentation for CSS buffers."
   :group 'tsi-css
+  :keymap (make-sparse-keymap)
 
-  (setq tsi-css-mode-map (make-sparse-keymap))
   (cond
    (tsi-css-mode
     ;; enabling mode

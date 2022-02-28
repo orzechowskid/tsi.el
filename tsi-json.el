@@ -93,8 +93,8 @@
 (define-minor-mode tsi-json-mode
   "Use tree-sitter to calculate indentation for JSON buffers."
   :group 'tsi-json
+  :keymap (make-sparse-keymap)
 
-  (setq tsi-json-mode-map (make-sparse-keymap))
   (cond
    (tsi-json-mode
     ;; enabling mode

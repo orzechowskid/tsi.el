@@ -124,7 +124,7 @@ if (foo)
   bar();
 "
       :to-be-indented))
- 
+
  (it "properly indents bracketed if/else statements"
      (expect
       "
@@ -195,6 +195,16 @@ const x = [{
       :to-be-indented)))
 
 (describe
+ "indenting type definitions"
+ (it "properly indents multi-line conditional types"
+     (expect
+      "
+type A<T, U> = T extends U ?
+  U : never;
+"
+      :to-be-indented))
+ )
+(describe
  "indenting function arguments"
  (it "properly indents function arguments"
      (expect
@@ -214,6 +224,16 @@ const foo = (
   a,
   b
 ) => a + b;
+"
+      :to-be-indented)))
+
+(describe
+ "indenting arrow functions"
+ (it "properly indents arrow expression spanning two lines"
+     (expect
+      "
+const x = () =>
+  4 + 2;
 "
       :to-be-indented)))
 
@@ -333,6 +353,16 @@ function() {
   
 }
 "
+    :to-be-indented))
+
+ (it "properly indents whitepace in multi-line JSX opening elements"
+     (expect
+      "
+<div
+  
+>
+</div>
+"
       :to-be-indented))
 
  (it "properly indents whitepace in multi-line JSX opening elements"
@@ -345,7 +375,7 @@ function() {
 "
       :to-be-indented))
 
-  (it "properly indents whitepace in multi-line JSX self-closing elements"
+ (it "properly indents whitepace in multi-line JSX self-closing elements"
      (expect
       "
 <div
@@ -354,12 +384,87 @@ function() {
 "
       :to-be-indented))
 
-(it "properly indents whitespace in multi-line parenthesis"
+ (it "properly indents whitespace in multi-line parenthesis"
      (expect
       "
 if (
   
 ) {
+}
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line objects in return statements"
+     (expect
+      "
+function f() {
+  return {
+    
+  };
+}
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line formal parameters"
+     (expect
+      "
+const x = (
+  
+) => {}
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line type parameters"
+     (expect
+      "
+function f<
+  
+>() {}
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line type arguments"
+     (expect
+      "
+type HasLength = Pick<
+  
+>;
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line objects in assignment expression"
+     (expect
+      "
+x = {
+  
+}
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line intersection types"
+     (expect
+      "
+type C = A &
+  B;
+"
+      :to-be-indented))
+
+ (it "properly indents multi-line objects inside arrays"
+     (expect
+      "
+[
+  {
+    
+  }
+]
+"
+      :to-be-indented))
+
+ (it "property indents type aliases"
+     (expect
+      "
+type X = {
+  
 }
 "
       :to-be-indented)))

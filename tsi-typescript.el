@@ -349,19 +349,11 @@
 (defun tsi--current-line-empty-p ()
   (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
 
-(defun tsi-typescript--tsc-node-type-or-nil (maybe-node)
-  "Return node type if maybe-node is not nil, else nil.
-
-Avoids '(wrong-type-argument user-ptrp nil)' error if maybe-node is nil.
-"
-  (if maybe-node
-      (tsc-node-type maybe-node)
-    nil))
-
 (defun tsi-typescript--get-indent-for-current-line ()
-  (let* ((node-at-point (tree-sitter-node-at-point))
-         (current-type (tsc-node-type node-at-point))
-         (parent-type (tsi-typescript--tsc-node-type-or-nil (tsc-get-parent node-at-point))))
+  (when-let* ((node-at-point (tree-sitter-node-at-point))
+              (current-type (tsc-node-type node-at-point))
+              (parent (tsc-get-parent node-at-point))
+              (parent-type (tsc-node-type parent)))
     (cond
      ((and
        (tsi--current-line-empty-p)
@@ -431,3 +423,4 @@ Avoids '(wrong-type-argument user-ptrp nil)' error if maybe-node is nil.
 
 (provide 'tsi-typescript)
 ;;; tsi-typescript.el ends here
+

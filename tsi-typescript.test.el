@@ -69,6 +69,16 @@ const x =
       :to-be-indented)))
 
 (describe
+ "indenting variable assignment"
+ (it "properly indents when the value for an assignment is on a separate line"
+     (expect
+      "
+x =
+  123;
+"
+      :to-be-indented)))
+
+(describe
  "indenting interface and type defs"
  (it "properly indents when an interface is defined across multiple lines"
      (expect

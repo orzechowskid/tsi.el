@@ -78,15 +78,24 @@
                        current-type
                        'statement_block)))
             tsi-typescript-indent-offset)
-           
+
+           ((eq
+             parent-type
+             'assignment_expression)
+            (when (or
+                   ;; this list is going to grow kind of big
+                   (eq current-type 'template_string)
+                   (eq current-type 'number))
+              tsi-typescript-indent-offset))
+
            ((eq
              parent-type
              'conditional_type)
             tsi-typescript-indent-offset)
+
            ((eq
              parent-type
              'arguments)
-
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset
               nil))

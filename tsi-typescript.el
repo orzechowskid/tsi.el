@@ -66,9 +66,34 @@
            (t nil)))
          (parent-indentation
           (cond
+           ((and (eq
+                  parent-type
+                  'intersection_type))
+            tsi-typescript-indent-offset)
+           
+           ((and (eq
+                  parent-type
+                  'arrow_function)
+                 (not (eq
+                       current-type
+                       'statement_block)))
+            tsi-typescript-indent-offset)
+           
+           ((eq
+             parent-type
+             'conditional_type)
+            tsi-typescript-indent-offset)
            ((eq
              parent-type
              'arguments)
+
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
+           ((eq
+             parent-type
+             'type_parameters)
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset
               nil))
@@ -245,7 +270,7 @@
            ((eq
              parent-type
              'type_alias_declaration)
-            (if (tsc-node-named-p current-node)
+            (if (and (tsc-node-named-p current-node) (not (eq current-type 'object_type)))
                 tsi-typescript-indent-offset
               nil))
 
@@ -280,16 +305,16 @@
              parent-type
              'union_type)
             (cond
-              ((tsc-node-named-p current-node)
-               tsi-typescript-indent-offset)
-              ((not (eq
-                     (tsc-node-type (tsi--highest-node-on-same-line-as parent-node))
-                     'union_type))
-               ;; type FooBar =
-               ;;   | Foo
-               ;;   | Bar;
-               tsi-typescript-indent-offset)
-              (t nil)))
+             ((tsc-node-named-p current-node)
+              tsi-typescript-indent-offset)
+             ((not (eq
+                    (tsc-node-type (tsi--highest-node-on-same-line-as parent-node))
+                    'union_type))
+              ;; type FooBar =
+              ;;   | Foo
+              ;;   | Bar;
+              tsi-typescript-indent-offset)
+             (t nil)))
 
            ((eq
              parent-type
@@ -321,19 +346,29 @@
      (or child-indentation 0)
      (or comment-indentation 0))))
 
-
 (defun tsi--current-line-empty-p ()
   (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
 
 (defun tsi-typescript--get-indent-for-current-line ()
-  (let* ((node-at-point (tree-sitter-node-at-point))
-         (current-type (tsc-node-type node-at-point)))
+  (when-let* ((node-at-point (tree-sitter-node-at-point))
+              (current-type (tsc-node-type node-at-point))
+              (parent (tsc-get-parent node-at-point))
+              (parent-type (tsc-node-type parent)))
     (cond
      ((and
-       (or (eq current-type 'jsx_opening_element)
-           (eq current-type 'jsx_self_closing_element)
-           (eq current-type 'parenthesized_expression))
-       (tsi--current-line-empty-p)) tsi-typescript-indent-offset)
+       (tsi--current-line-empty-p)
+       (or
+        (eq current-type 'jsx_opening_element)
+        (eq current-type 'jsx_self_closing_element)
+        (eq current-type 'parenthesized_expression)
+        (eq current-type 'type_parameters)
+        (eq current-type 'type_arguments)
+        (and
+         (eq current-type 'object)
+         (or (eq parent-type 'return_statement)
+             (eq parent-type 'array)
+             (eq parent-type 'assignment_expression)))))
+      (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
      (t 0))))
 
 ;; exposed for testing purposes
@@ -388,3 +423,4 @@
 
 (provide 'tsi-typescript)
 ;;; tsi-typescript.el ends here
+

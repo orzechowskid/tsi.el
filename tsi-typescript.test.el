@@ -373,7 +373,7 @@ function() {
   
 }
 "
-    :to-be-indented))
+      :to-be-indented))
 
  (it "properly indents whitepace in multi-line JSX opening elements"
      (expect
@@ -413,6 +413,17 @@ if (
 }
 "
       :to-be-indented))
+
+ (it "properly indents whitespace in arrow functions with parenthesis"
+     (expect
+      "
+const X = () => (
+  3
+  
+);
+"
+      :to-be-indented))
+
 
  (it "properly indents multi-line objects in return statements"
      (expect
@@ -487,6 +498,39 @@ type X = {
   
 }
 "
-      :to-be-indented)))
+      :to-be-indented))
+
+ (it "property indents switch statement bodies"
+     (expect
+      "
+switch (x) {
+  
+}
+"
+      :to-be-indented))
+ (it "property indents case statements"
+     (expect
+      "
+switch (x) {
+  case 1:
+    
+    3;
+}
+"
+      :to-be-indented))
+
+ (it "property indents default statements"
+     (expect
+      "
+switch (condition) {
+  case expression:
+    break;
+  default:
+    
+    return 4;
+}
+"
+      :to-be-indented)
+))
 
 (buttercup-run-discover)

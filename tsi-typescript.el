@@ -376,9 +376,13 @@
        (or
         (eq current-type 'jsx_opening_element)
         (eq current-type 'jsx_self_closing_element)
-        (eq current-type 'parenthesized_expression)
         (eq current-type 'type_parameters)
         (eq current-type 'type_arguments)
+        (eq current-type 'switch_body)
+        (eq current-type 'switch_case)
+        (eq current-type 'switch_default)
+        (and (eq current-type 'parenthesized_expression)
+             (eq parent-type 'if_statement))
         (and
          (eq current-type 'object)
          (or (eq parent-type 'return_statement)

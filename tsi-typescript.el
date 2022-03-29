@@ -278,6 +278,13 @@
 
            ((eq
              parent-type
+             'switch_default)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
+           ((eq
+             parent-type
              'type_alias_declaration)
             (if (and (tsc-node-named-p current-node) (not (eq current-type 'object_type)))
                 tsi-typescript-indent-offset

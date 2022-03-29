@@ -157,6 +157,16 @@ switch (foo) {
     bar();
 }
 "
+      :to-be-indented))
+
+(it "properly indents default statements"
+     (expect
+      "
+switch (foo) {
+  default:
+    bar();
+}
+"
       :to-be-indented)))
 
 (describe

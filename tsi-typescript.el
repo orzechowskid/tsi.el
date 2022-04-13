@@ -56,7 +56,10 @@
               'enum_body)
              (eq
               current-type
-              'import_clause))
+              'import_clause)
+             (eq
+              current-type
+              'switch_body))
             (if (and
                  (> (line-number-at-pos) (car (tsc-node-start-point current-node)))
                  (< (line-number-at-pos) (car (tsc-node-end-point current-node))))
@@ -272,7 +275,7 @@
            ((eq
              parent-type
              'switch_case)
-            (if (tsc-node-named-p current-node)
+            (if (and (tsc-node-named-p current-node) (not (eq current-type 'statement_block)))
                 tsi-typescript-indent-offset
               nil))
 
@@ -378,9 +381,10 @@
         (eq current-type 'jsx_self_closing_element)
         (eq current-type 'type_parameters)
         (eq current-type 'type_arguments)
-        (eq current-type 'switch_body)
         (eq current-type 'switch_case)
         (eq current-type 'switch_default)
+        (and (eq current-type 'switch_body)
+             (not (eq parent-type 'switch_statement)))
         (and (eq current-type 'parenthesized_expression)
              (eq parent-type 'if_statement))
         (and

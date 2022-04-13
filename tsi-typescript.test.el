@@ -167,6 +167,15 @@ switch (foo) {
     bar();
 }
 "
+      :to-be-indented))
+
+(it "properly indents blank lines in switch case statements"
+     (expect
+      "
+switch (x) {
+  
+}
+"
       :to-be-indented)))
 
 (describe

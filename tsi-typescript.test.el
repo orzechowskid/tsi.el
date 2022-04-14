@@ -511,7 +511,7 @@ type C = A &
 "
       :to-be-indented))
 
- (it "property indents type aliases"
+ (it "properly indents type aliases"
      (expect
       "
 type X = {
@@ -520,7 +520,7 @@ type X = {
 "
       :to-be-indented))
 
- (it "property indents switch statement bodies"
+ (it "properly indents switch statement bodies"
      (expect
       "
 switch (x) {
@@ -528,7 +528,7 @@ switch (x) {
 }
 "
       :to-be-indented))
- (it "property indents case statements"
+ (it "properly indents case statements"
      (expect
       "
 switch (x) {
@@ -539,7 +539,7 @@ switch (x) {
 "
       :to-be-indented))
 
- (it "property indents default statements"
+ (it "properly indents default statements"
      (expect
       "
 switch (condition) {

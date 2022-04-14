@@ -97,7 +97,18 @@ type Foo = Omit<
   'baz'
 >;
 "
-      :to-be-indented)))
+      :to-be-indented))
+
+ (it "properly indents object types inside type annotations"
+     (expect
+      "
+interface X {
+  x: {
+    
+  };
+}"
+      :to-be-indented)) 
+ )
 
 (describe
  "indenting union types"

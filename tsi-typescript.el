@@ -296,7 +296,7 @@
            ((eq
              parent-type
              'type_annotation)
-            (if (tsc-node-named-p current-node)
+            (if (and (tsc-node-named-p current-node) (not (eq current-type 'object_type)))
                 tsi-typescript-indent-offset
               nil))
 

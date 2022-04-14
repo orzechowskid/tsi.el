@@ -553,4 +553,55 @@ switch (condition) {
       :to-be-indented)
 ))
 
+(describe
+ "indents new scopes"
+ (it "properly indents expression statement inside statement block "
+     (expect
+      "
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents two expression statements inside statement block "
+     (expect
+      "
+{
+  0
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside statement block with a preceding node"
+     (expect
+      "
+0
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside if block "
+     (expect
+      "
+if (0)
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside statement block preceded by expression statement"
+     (expect
+      "
+0 {
+  0
+}
+"
+      :to-be-indented))
+)
+
 (buttercup-run-discover)

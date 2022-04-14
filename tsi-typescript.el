@@ -47,9 +47,6 @@
            ((or
              (eq
               current-type
-              'statement_block)
-             (eq
-              current-type
               'object_type)
              (eq
               current-type
@@ -383,6 +380,7 @@
         (eq current-type 'type_arguments)
         (eq current-type 'switch_case)
         (eq current-type 'switch_default)
+        (eq current-type 'statement_block)
         (and (eq current-type 'switch_body)
              (not (eq parent-type 'switch_statement)))
         (and (eq current-type 'parenthesized_expression)

@@ -97,7 +97,18 @@ type Foo = Omit<
   'baz'
 >;
 "
-      :to-be-indented)))
+      :to-be-indented))
+
+ (it "properly indents object types inside type annotations"
+     (expect
+      "
+interface X {
+  x: {
+    
+  };
+}"
+      :to-be-indented)) 
+ )
 
 (describe
  "indenting union types"
@@ -165,6 +176,15 @@ switch (foo) {
 switch (foo) {
   default:
     bar();
+}
+"
+      :to-be-indented))
+
+(it "properly indents blank lines in switch case statements"
+     (expect
+      "
+switch (x) {
+  
 }
 "
       :to-be-indented)))
@@ -373,7 +393,7 @@ function() {
   
 }
 "
-    :to-be-indented))
+      :to-be-indented))
 
  (it "properly indents whitepace in multi-line JSX opening elements"
      (expect
@@ -413,6 +433,17 @@ if (
 }
 "
       :to-be-indented))
+
+ (it "properly indents whitespace in arrow functions with parenthesis"
+     (expect
+      "
+const X = () => (
+  3
+  
+);
+"
+      :to-be-indented))
+
 
  (it "properly indents multi-line objects in return statements"
      (expect
@@ -480,13 +511,97 @@ type C = A &
 "
       :to-be-indented))
 
- (it "property indents type aliases"
+ (it "properly indents type aliases"
      (expect
       "
 type X = {
   
 }
 "
-      :to-be-indented)))
+      :to-be-indented))
+
+ (it "properly indents switch statement bodies"
+     (expect
+      "
+switch (x) {
+  
+}
+"
+      :to-be-indented))
+ (it "properly indents case statements"
+     (expect
+      "
+switch (x) {
+  case 1:
+    
+    3;
+}
+"
+      :to-be-indented))
+
+ (it "properly indents default statements"
+     (expect
+      "
+switch (condition) {
+  case expression:
+    break;
+  default:
+    
+    return 4;
+}
+"
+      :to-be-indented)
+))
+
+(describe
+ "indents new scopes"
+ (it "properly indents expression statement inside statement block "
+     (expect
+      "
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents two expression statements inside statement block "
+     (expect
+      "
+{
+  0
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside statement block with a preceding node"
+     (expect
+      "
+0
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside if block "
+     (expect
+      "
+if (0)
+{
+  0
+}
+"
+      :to-be-indented))
+
+ (it "properly indents expression statement inside statement block preceded by expression statement"
+     (expect
+      "
+0 {
+  0
+}
+"
+      :to-be-indented))
+)
 
 (buttercup-run-discover)

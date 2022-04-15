@@ -47,16 +47,16 @@
            ((or
              (eq
               current-type
-              'statement_block)
-             (eq
-              current-type
               'object_type)
              (eq
               current-type
               'enum_body)
              (eq
               current-type
-              'import_clause))
+              'import_clause)
+             (eq
+              current-type
+              'switch_body))
             (if (and
                  (> (line-number-at-pos) (car (tsc-node-start-point current-node)))
                  (< (line-number-at-pos) (car (tsc-node-end-point current-node))))
@@ -272,7 +272,7 @@
            ((eq
              parent-type
              'switch_case)
-            (if (tsc-node-named-p current-node)
+            (if (and (tsc-node-named-p current-node) (not (eq current-type 'statement_block)))
                 tsi-typescript-indent-offset
               nil))
 
@@ -293,7 +293,7 @@
            ((eq
              parent-type
              'type_annotation)
-            (if (tsc-node-named-p current-node)
+            (if (and (tsc-node-named-p current-node) (not (eq current-type 'object_type)))
                 tsi-typescript-indent-offset
               nil))
 
@@ -376,9 +376,15 @@
        (or
         (eq current-type 'jsx_opening_element)
         (eq current-type 'jsx_self_closing_element)
-        (eq current-type 'parenthesized_expression)
         (eq current-type 'type_parameters)
         (eq current-type 'type_arguments)
+        (eq current-type 'switch_case)
+        (eq current-type 'switch_default)
+        (eq current-type 'statement_block)
+        (and (eq current-type 'switch_body)
+             (not (eq parent-type 'switch_statement)))
+        (and (eq current-type 'parenthesized_expression)
+             (eq parent-type 'if_statement))
         (and
          (eq current-type 'object)
          (or (eq parent-type 'return_statement)

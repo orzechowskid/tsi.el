@@ -604,4 +604,16 @@ if (0)
       :to-be-indented))
 )
 
+(describe
+ "indenting parenthesis"
+
+ (it "properly indents parenthesized types"
+     (expect
+      "
+let a: (
+  0
+)
+"
+      :to-be-indented)))
+ 
 (buttercup-run-discover)

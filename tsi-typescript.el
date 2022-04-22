@@ -366,7 +366,7 @@
   (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
 
 (defun tsi-typescript--get-indent-for-current-line ()
-  (when-let* ((node-at-point (tree-sitter-node-at-point))
+  (when-let* ((node-at-point (tree-sitter-node-at-pos))
               (current-type (tsc-node-type node-at-point))
               (parent (tsc-get-parent node-at-point))
               (parent-type (tsc-node-type parent)))

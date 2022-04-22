@@ -73,7 +73,7 @@ Returns the uppermost tree node sharing the same line as NODE."
             (forward-line
              (- line-number (line-number-at-pos)))
             (back-to-indentation)
-            (tree-sitter-node-at-point))))
+            (tree-sitter-node-at-pos))))
     (tsi--highest-node-at node-at-new-point)))
 
 (defun tsi--indent-line-to (column)
@@ -113,7 +113,7 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
         (tsi--highest-node-at
          (save-excursion
            (back-to-indentation)
-           (tree-sitter-node-at-point))))
+           (tree-sitter-node-at-pos))))
        (parent-node
         (or
          (tsc-get-parent highest-node)
@@ -122,7 +122,7 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
         (if (eq
              parent-node
              highest-node)
-            (tree-sitter-node-at-point)
+            (tree-sitter-node-at-pos)
           highest-node))
        (indent-ops
         '()))

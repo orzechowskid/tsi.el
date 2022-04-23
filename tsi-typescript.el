@@ -252,6 +252,13 @@
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset
               nil))
+           
+           ((eq
+             parent-type
+             'parenthesized_type)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
 
            ((eq
              parent-type

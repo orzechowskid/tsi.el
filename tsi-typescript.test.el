@@ -582,6 +582,22 @@ switch (condition) {
 [{
   
 }]"
+      :to-be-indented))
+
+ (it "properly blank lines inside an array inside of an object inside of an array"
+     (expect
+      "
+[{[
+  
+]}]"
+      :to-be-indented))
+
+ (it "properly blank lines inside an array inside of an object inside of an object"
+     (expect
+      "
+[{{
+  
+}}]"
       :to-be-indented)))
 
 (describe

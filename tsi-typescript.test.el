@@ -265,6 +265,15 @@ const foo = (
   b
 ) => a + b;
 "
+      :to-be-indented))
+
+ (it "properly indents object arguments to functions on blank lines"
+     (expect
+      "
+foo({
+  
+});
+"
       :to-be-indented)))
 
 (describe

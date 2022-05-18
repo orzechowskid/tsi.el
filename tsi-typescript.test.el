@@ -265,6 +265,15 @@ const foo = (
   b
 ) => a + b;
 "
+      :to-be-indented))
+
+ (it "properly indents object arguments to functions on blank lines"
+     (expect
+      "
+foo({
+  
+});
+"
       :to-be-indented)))
 
 (describe
@@ -424,12 +433,18 @@ function() {
 "
       :to-be-indented))
 
- (it "properly indents whitespace in multi-line parenthesis"
+ (it "properly indents whitespace in if statements multi-line parenthesis"
      (expect
       "
 if (
   
 ) {
+  
+}
+else if (
+  
+) {
+  
 }
 "
       :to-be-indented))
@@ -550,8 +565,49 @@ switch (condition) {
     return 4;
 }
 "
-      :to-be-indented)
-))
+      :to-be-indented))
+
+ (it "properly indents blank lines inside multiline arrays"
+     (expect
+      "
+[
+  
+]
+"
+      :to-be-indented))
+
+ (it "properly blank lines inside nested multiline arrays with delimeters on same line"
+     (expect
+      "
+[[
+  
+]]
+"
+      :to-be-indented))
+
+ (it "properly blank lines inside object in an array with delimeters on same line"
+     (expect
+      "
+[{
+  
+}]"
+      :to-be-indented))
+
+ (it "properly blank lines inside an array inside of an object inside of an array"
+     (expect
+      "
+[{[
+  
+]}]"
+      :to-be-indented))
+
+ (it "properly blank lines inside an array inside of an object inside of an object"
+     (expect
+      "
+[{{
+  
+}}]"
+      :to-be-indented)))
 
 (describe
  "indents new scopes"

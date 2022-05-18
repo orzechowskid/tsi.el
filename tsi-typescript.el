@@ -370,42 +370,69 @@
      (or comment-indentation 0))))
 
 (defun tsi--current-line-empty-p ()
+  "Internal function.
+
+Returns true if the line at point is empty or nothing but whitespace."
   (string-match-p "\\`[[:space:]]*$" (thing-at-point 'line)))
 
+(defun tsi--node-line-num (node)
+  "Internal function.
+
+Return the line number of the start point of the given node."
+  (car (tsc-node-start-point node)))
+
+(defconst tsi-typescript--doubly-nestable-types '(array object statement_block)
+  "List of node  types that can be doubly nested on the same like.
+Used to avoid double indenting blank lines following things like '[{'")
+
 (defun tsi-typescript--get-indent-for-current-line ()
-  (when-let* ((node-at-point (tree-sitter-node-at-point))
+  "Internal function.
+
+Get the indentation to add for the current line. Handles cases
+where the current line is empty."
+  (when-let* ((node-at-point (tree-sitter-node-at-pos))
               (current-type (tsc-node-type node-at-point))
               (parent (tsc-get-parent node-at-point))
               (parent-type (tsc-node-type parent)))
-    (cond
-     ((and
-       (tsi--current-line-empty-p)
-       (or
-        (eq current-type 'jsx_opening_element)
-        (eq current-type 'jsx_self_closing_element)
-        (eq current-type 'type_parameters)
-        (eq current-type 'type_arguments)
-        (eq current-type 'switch_case)
-        (eq current-type 'switch_default)
-        (eq current-type 'statement_block)
-        (and (eq current-type 'switch_body)
-             (not (eq parent-type 'switch_statement)))
-        (and (eq current-type 'parenthesized_expression)
-             (eq parent-type 'if_statement))
-        (and
-         (eq current-type 'object)
-         (or (eq parent-type 'return_statement)
-             (eq parent-type 'array)
-             (eq parent-type 'assignment_expression)))))
-      (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
-     (t 0))))
+    (let ((current-parent-same-line-p (eq (tsi--node-line-num node-at-point)
+                                          (tsi--node-line-num parent))))
+      (cond ((and
+              (tsi--current-line-empty-p)
+              (or
+               (eq current-type 'jsx_opening_element)
+               (eq current-type 'jsx_self_closing_element)
+               (eq current-type 'type_parameters)
+               (eq current-type 'type_arguments)
+               (eq current-type 'switch_case)
+               (eq current-type 'switch_default)
+               
+               (and (eq current-type 'switch_body)
+                    (not (eq parent-type 'switch_statement)))
+               
+               (and (eq current-type 'parenthesized_expression)
+                    (not (eq parent-type 'arrow_function)))
+
+               (and (eq current-type 'arrow_function)
+                    (eq parent-type 'arguments))
+               
+               (and
+                (eq current-type 'object)
+                (or (eq parent-type 'return_statement)
+                    (eq parent-type 'assignment_expression)))
+
+               (and (memq current-type tsi-typescript--doubly-nestable-types)
+                    (not (or (eq parent-type 'variable_declarator)
+                             (eq parent-type 'arguments)
+                             (and (memq parent-type tsi-typescript--doubly-nestable-types) current-parent-same-line-p))))))
+             (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
+            (t 0)))))
 
 ;; exposed for testing purposes
 ;;;###autoload
 (defun tsi-typescript--indent-line ()
   "Internal function.
 
-  Calculate indentation for the current line."
+   Indent the current line."
   (tsi-indent-line #'tsi-typescript--get-indent-for #'tsi-typescript--get-indent-for-current-line))
 
 (defun tsi-typescript--outdent-line ()
@@ -452,4 +479,5 @@
 
 (provide 'tsi-typescript)
 ;;; tsi-typescript.el ends here
+
 

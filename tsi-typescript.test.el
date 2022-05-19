@@ -671,5 +671,26 @@ let a: (
 )
 "
       :to-be-indented)))
+
+(describe
+ "multiline operators"
+
+ (it "properly indents Operators split over multiple lines with operators at end of lines"
+     (expect
+      "
+0 +
+  0 +
+  0
+"
+      :to-be-indented))
+ 
+ (it "properly indents Operators split over multiple lines with operators at beginning of lines"
+     (expect
+      "
+0 +
+  + 0
+  + 0
+"
+      :to-be-indented)))
  
 (buttercup-run-discover)

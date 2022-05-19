@@ -417,7 +417,8 @@ where the current line is empty."
                (eq current-type 'type_arguments)
                (eq current-type 'switch_case)
                (eq current-type 'switch_default)
-               
+               (eq current-type 'arguments)
+
                (and (eq current-type 'switch_body)
                     (not (eq parent-type 'switch_statement)))
                
@@ -427,15 +428,11 @@ where the current line is empty."
                (and (eq current-type 'arrow_function)
                     (eq parent-type 'arguments))
                
-               (and
-                (eq current-type 'object)
-                (or (eq parent-type 'return_statement)
-                    (eq parent-type 'assignment_expression)))
-
                (and (memq current-type tsi-typescript--doubly-nestable-types)
                     (not (or (eq parent-type 'variable_declarator)
                              (eq parent-type 'arguments)
                              (eq parent-type 'pair)
+                             (eq parent-type 'parenthesized_expression)
                              (and (memq parent-type tsi-typescript--doubly-nestable-types) current-parent-same-line-p))))))
              (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
             (t 0)))))

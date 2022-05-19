@@ -351,6 +351,13 @@
              'binary_expression)
             tsi-typescript-indent-offset)
 
+           ((eq
+             parent-type
+             'computed_property_name)
+            (if (tsc-node-named-p current-node)
+                tsi-typescript-indent-offset
+              nil))
+
            (t nil)))
          (comment-indentation
           (if (and

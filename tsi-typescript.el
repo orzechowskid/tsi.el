@@ -345,6 +345,11 @@
             (if (tsc-node-named-p current-node)
                 tsi-typescript-indent-offset
               nil))
+           
+           ((eq
+             parent-type
+             'binary_expression)
+            tsi-typescript-indent-offset)
 
            (t nil)))
          (comment-indentation

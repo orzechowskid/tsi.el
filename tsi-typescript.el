@@ -423,6 +423,7 @@ where the current line is empty."
                (and (memq current-type tsi-typescript--doubly-nestable-types)
                     (not (or (eq parent-type 'variable_declarator)
                              (eq parent-type 'arguments)
+                             (eq parent-type 'pair)
                              (and (memq parent-type tsi-typescript--doubly-nestable-types) current-parent-same-line-p))))))
              (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
             (t 0)))))

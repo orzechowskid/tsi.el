@@ -526,6 +526,17 @@ type C = A &
 "
       :to-be-indented))
 
+(it "properly indents blank lines inside object literals"
+     (expect
+      "
+{
+  x: {
+    
+  }
+}
+"
+      :to-be-indented))
+
  (it "properly indents type aliases"
      (expect
       "

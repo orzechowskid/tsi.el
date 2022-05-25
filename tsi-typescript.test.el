@@ -700,7 +700,28 @@ let a: (
       "
 0 +
   + 0
-  + 0
+  + 0"
+
+      :to-be-indented)))
+
+(describe 
+ "indenting interpolated keys"
+
+ (it "properly indents multiline interpolated variable declarations"
+     (expect
+      "
+let a: {[
+  0
+]: 0}
+"
+      :to-be-indented))
+
+ (it "properly indents multiline interpolated variable assignments"
+     (expect
+      "
+let a = {[
+  0
+]: 0}
 "
       :to-be-indented)))
  

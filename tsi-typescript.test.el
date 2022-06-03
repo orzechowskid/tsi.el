@@ -526,7 +526,7 @@ type C = A &
 "
       :to-be-indented))
 
-(it "properly indents blank lines inside object literals"
+ (it "properly indents blank lines inside object literals"
      (expect
       "
 {
@@ -618,6 +618,22 @@ switch (condition) {
 [{{
   
 }}]"
+      :to-be-indented))
+ 
+ (it "properly indents blank lines inside function arguments"
+     (expect
+      "
+f(
+  
+)"
+      :to-be-indented))
+ 
+ (it "properly indents blank lines inside arrays inside parenthesized_expression"
+     (expect
+      "
+if ([
+  
+]) {}"
       :to-be-indented)))
 
 (describe

@@ -402,40 +402,38 @@ Used to avoid double indenting blank lines following things like '[{'")
 
 Get the indentation to add for the current line. Handles cases
 where the current line is empty."
-  (when-let* ((node-at-point (tree-sitter-node-at-pos))
-              (current-type (tsc-node-type node-at-point))
-              (parent (tsc-get-parent node-at-point))
-              (parent-type (tsc-node-type parent)))
-    (let ((current-parent-same-line-p (eq (tsi--node-line-num node-at-point)
-                                          (tsi--node-line-num parent))))
-      (cond ((and
-              (tsi--current-line-empty-p)
-              (or
-               (eq current-type 'jsx_opening_element)
-               (eq current-type 'jsx_self_closing_element)
-               (eq current-type 'type_parameters)
-               (eq current-type 'type_arguments)
-               (eq current-type 'switch_case)
-               (eq current-type 'switch_default)
-               (eq current-type 'arguments)
+  (let* ((node-at-point (tree-sitter-node-at-pos))
+	 (current-type (tsc-node-type node-at-point))
+	 (parent (tsc-get-parent node-at-point))
+	 (parent-type (tsc-node-type parent))
+	 (current-parent-same-line-p (eq (tsi--node-line-num node-at-point)
+					 (tsi--node-line-num parent))))
+    (cond ((and
+	    (tsi--current-line-empty-p)
+	    (or
+	     (eq current-type 'jsx_opening_element)
+	     (eq current-type 'jsx_self_closing_element)
+	     (eq current-type 'type_parameters)
+	     (eq current-type 'type_arguments)
+	     (eq current-type 'switch_case)
+	     (eq current-type 'switch_default)
+	     (eq current-type 'arguments)
+	     (and (eq current-type 'switch_body)
+                  (not (eq parent-type 'switch_statement)))
+             (and (eq current-type 'parenthesized_expression)
+                  (not (eq parent-type 'arrow_function)))
+	     (and (eq current-type 'arrow_function)
+                  (eq parent-type 'arguments))
+             (and (memq current-type tsi-typescript--doubly-nestable-types)
+                  (not (or (eq parent-type 'variable_declarator)
+                           (eq parent-type 'arguments)
+                           (eq parent-type 'pair)
+                           (eq parent-type 'parenthesized_expression)
+                           (and (memq parent-type tsi-typescript--doubly-nestable-types)
+				current-parent-same-line-p))))))
+	   tsi-typescript-indent-offset)
+	  (t 0))))
 
-               (and (eq current-type 'switch_body)
-                    (not (eq parent-type 'switch_statement)))
-               
-               (and (eq current-type 'parenthesized_expression)
-                    (not (eq parent-type 'arrow_function)))
-
-               (and (eq current-type 'arrow_function)
-                    (eq parent-type 'arguments))
-               
-               (and (memq current-type tsi-typescript--doubly-nestable-types)
-                    (not (or (eq parent-type 'variable_declarator)
-                             (eq parent-type 'arguments)
-                             (eq parent-type 'pair)
-                             (eq parent-type 'parenthesized_expression)
-                             (and (memq parent-type tsi-typescript--doubly-nestable-types) current-parent-same-line-p))))))
-             (progn (tsi--debug "indent for current line: %s" tsi-typescript-indent-offset) tsi-typescript-indent-offset))
-            (t 0)))))
 
 ;; exposed for testing purposes
 ;;;###autoload

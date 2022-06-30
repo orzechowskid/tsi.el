@@ -391,7 +391,8 @@ Returns true if the line at point is empty or nothing but whitespace."
   "Internal function.
 
 Return the line number of the start point of the given node."
-  (car (tsc-node-start-point node)))
+  (when node
+    (car (tsc-node-start-point node))))
 
 (defconst tsi-typescript--doubly-nestable-types '(array object statement_block)
   "List of node  types that can be doubly nested on the same like.
@@ -403,11 +404,12 @@ Used to avoid double indenting blank lines following things like '[{'")
 Get the indentation to add for the current line. Handles cases
 where the current line is empty."
   (let* ((node-at-point (tree-sitter-node-at-pos))
-	 (current-type (tsc-node-type node-at-point))
+	 (current-type (when node-at-point (tsc-node-type node-at-point)))
 	 (parent (tsc-get-parent node-at-point))
-	 (parent-type (tsc-node-type parent))
+	 (parent-type (when parent (tsc-node-type parent)))
 	 (current-parent-same-line-p (eq (tsi--node-line-num node-at-point)
 					 (tsi--node-line-num parent))))
+    (message "%s %s" current-type parent-type)
     (cond ((and
 	    (tsi--current-line-empty-p)
 	    (or

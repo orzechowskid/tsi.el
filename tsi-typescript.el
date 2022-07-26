@@ -6,7 +6,7 @@
 
 ;;; URL: https://github.com/orzechowskid/tsi.el
 
-;;; Package-Requires: ((tsi "1.0.0"))
+;;; Package-Requires: ((tsi "1.1.1"))
 
 ;;; SPDX-License-Identifier: GPLv3
 

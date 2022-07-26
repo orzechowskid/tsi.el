@@ -1,6 +1,6 @@
 ;;; tsi.el --- tree-sitter indentation -*- lexical-binding: t; -*-
 
-;;; Version: 1.1.0
+;;; Version: 1.1.1
 
 ;;; Author: Dan Orzechowski
 
@@ -155,6 +155,22 @@ INDENT-INFO-FN is a function taking two arguments: (current-node parent-node)."
       (tsi--debug "indenting to column %d" column)
       column)))
 
+
+;;;###autoload
+(defun tsi-calculate-indentation (indent-info-fn &optional extra-indent-for-current-line-fn)
+  "Calculates the indentation for the current line using INDENT-INFO-FN.
+
+If optional EXTRA-INDENT-FOR-CURRENT-LINE-FN is provided, will
+add the extra indentation amount returned by that function to the
+indent column. This is useful to handle special cases for the
+current line.
+"
+  (+
+   (or (tsi--walk indent-info-fn) 0)
+   (or (and extra-indent-for-current-line-fn (funcall extra-indent-for-current-line-fn)) 0)))
+
+
+;;;###autoload
 (defun tsi-indent-line (indent-info-fn &optional extra-indent-for-current-line-fn)
   "Indents the current line the number of characters returned by INDENT-INFO-FN.
 
@@ -163,10 +179,11 @@ add the extra indentation amount returned by that function to the
 indent column. This is useful to handle special cases for the
 current line.
 "
-  (let* ((indent (or (tsi--walk indent-info-fn) 0))
-         (extra-indent (or (and extra-indent-for-current-line-fn (funcall extra-indent-for-current-line-fn)) 0))
-         (column (+ indent extra-indent)))
-    (tsi--indent-line-to column)))
+
+  (tsi--indent-line-to (tsi-calculate-indentation
+			indent-info-fn
+			extra-indent-for-current-line-fn)))
+
 
 (provide 'tsi)
 ;;; tsi.el ends here

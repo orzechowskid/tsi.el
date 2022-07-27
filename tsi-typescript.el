@@ -1,12 +1,12 @@
 ;;; tsi-typescript.el --- tree-sitter indentation for Javascript/Typescript -*- lexical-binding: t; -*-
 
-;;; Version: 1.5.5
+;;; Version: 1.5.4
 
 ;;; Author: Dan Orzechowski
 
 ;;; URL: https://github.com/orzechowskid/tsi.el
 
-;;; Package-Requires: ((tsi "1.1.1"))
+;;; Package-Requires: ((tsi "1.0.0"))
 
 ;;; SPDX-License-Identifier: GPLv3
 

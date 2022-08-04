@@ -409,7 +409,6 @@ where the current line is empty."
 	 (parent-type (when parent (tsc-node-type parent)))
 	 (current-parent-same-line-p (eq (tsi--node-line-num node-at-point)
 					 (tsi--node-line-num parent))))
-    (message "%s %s" current-type parent-type)
     (cond ((and
 	    (tsi--current-line-empty-p)
 	    (or

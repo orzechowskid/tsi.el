@@ -10,6 +10,10 @@ Supported languages:
 - JSON
 - CSS/SCSS
 
+## an important note
+
+this package is intended for use in emacs versions 28 and older. emacs 29 will ship with an all-new, native, tree-sitter experience (including treesit-aware major modes for many programming languages) meaning you should not need this package or its dependencies.
+
 ## Installation
 
 0. Dependencies: make sure you have [`tree-sitter`](https://emacs-tree-sitter.github.io/installation/) installed already.

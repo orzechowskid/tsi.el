@@ -153,9 +153,15 @@
            ((eq
              parent-type
              'if_statement)
-            (if (eq
-                 current-type
-                 'expression_statement)
+            (if (or (eq current-type 'expression_statement)
+                    (eq current-type 'return_statement))
+                tsi-typescript-indent-offset
+              nil))
+
+           ((or (eq parent-type 'for_statement)
+                (eq parent-type 'for_in_statement))
+            (if (or (eq current-type 'expression_statement)
+                    (eq current-type 'return_statement))
                 tsi-typescript-indent-offset
               nil))
 

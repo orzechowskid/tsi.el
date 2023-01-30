@@ -138,11 +138,20 @@ if (foo) {
 "
       :to-be-indented))
  
- (it "properly indents un-bracketed if statements"
+ (it "properly indents un-braced if statements"
      (expect
       "
 if (foo)
   bar();
+"
+      :to-be-indented))
+
+ (it "properly indents un-braced if statements when the body returns"
+     (expect
+      "
+if (foo)
+  return;
+frobnicate();
 "
       :to-be-indented))
 
@@ -543,6 +552,39 @@ type C = A &
 type X = {
   
 }
+"
+      :to-be-indented))
+
+ (it "properly indents for loop body in braces"
+     (expect
+      "
+for (let i = 0; i < 10; i++) {
+  i;
+}
+"
+      :to-be-indented))
+ (it "properly indents for loop single-statement body without braces"
+     (expect
+      "
+for (let i = 0; i < 10; i++)
+  i;
+frobnicate();
+"
+      :to-be-indented))
+ (it "properly indents for-of loop body in braces"
+     (expect
+      "
+for (const x of list) {
+  x;
+}
+"
+      :to-be-indented))
+ (it "properly indents for-of loop single-statement body without braces"
+     (expect
+      "
+for (const x of list)
+  x;
+frobnicate();
 "
       :to-be-indented))
 
